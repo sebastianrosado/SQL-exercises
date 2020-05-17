@@ -1,0 +1,107 @@
+Categories:
+id
+name
+category
+main_category
+deadline (2009-05-20 21:50:00)
+goal
+launched (2009-04-30 22:10:30)
+state
+backers
+country
+usd_pledged
+currency
+pledged
+
+1. 
+SELECT DISTINCT(country)
+FROM ksprojects;
+
+2.
+SELECT COUNT(DISTINCT main_category)
+FROM ksprojects;
+
+SELECT COUNT(DISTINCT category)
+FROM ksprojects;
+
+15 unique values in main_category
+
+158 unique values in category
+
+3.
+SELECT DISTINCT main_category, category
+FROM ksprojects
+ORDER BY main_category;
+
+4.
+SELECT COUNT (DISTINCT category), main_category
+FROM ksprojects
+GROUP BY main_category
+ORDER BY main_category;
+
+-- main_category | count
+-- ---------------+-------
+--  Art           |    13
+--  Comics        |     6
+--  Crafts        |    15
+--  Dance         |     5
+--  Design        |     7
+--  Fashion       |     9
+--  Film & Video  |    20
+--  Food          |    13
+--  Games         |     8
+--  Journalism    |     6
+--  Music         |    18
+--  Photography   |     7
+--  Publishing    |    15
+--  Technology    |    16
+--  Theater       |     7
+
+5. 
+SELECT ROUND(AVG(backers),0) AS avg_backers, main_category
+FROM ksprojects
+GROUP BY main_category
+ORDER BY avg_backers DESC;	
+
+6.
+SELECT category, AVG(usd_pledged - goal) 
+AS amount_over_goal, COUNT(*)
+FROM ksprojects
+WHERE state = 'successful'
+GROUP BY category
+ORDER BY category;
+
+7.
+SELECT main_category, COUNT(backers) AS zero_backing_projects, MAX(goal) AS largest_goal_amount
+FROM ksprojects
+WHERE backers = 0
+GROUP BY main_category
+ORDER BY main_category, largest_goal_amount DESC;
+
+8.
+SELECT AVG(usd_pledged/NULLIF(backers,0)) AS avg_usd_per_backer, category
+FROM ksprojects
+GROUP BY category
+HAVING AVG(usd_pledged/NULLIF(backers,0)) < 50
+ORDER BY avg_usd_per_backer DESC;
+
+9.
+SELECT main_category, COUNT(*)
+FROM ksprojects
+WHERE state = 'successful' AND backers BETWEEN 5 AND 10
+GROUP BY main_category;
+
+10. 
+SELECT currency, SUM(pledged)
+FROM ksprojects
+GROUP BY currency
+ORDER BY SUM(pledged) DESC;
+
+11.
+SELECT main_category, SUM(backers)
+FROM ksprojects
+WHERE main_category NOT IN('Games', 'Technology') AND state = 'successful'
+GROUP BY main_category
+HAVING SUM(backers) > 100000
+ORDER BY main_category;
+
